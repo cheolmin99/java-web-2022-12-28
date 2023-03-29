@@ -1,6 +1,6 @@
 interface Dto {
     boardContent: string;
-    boardImgUrl: string;
+    boardImgUrl: string | null;
     boardNumber: number;
     boardTitle: string;
     boardWriteDatetime: string;
@@ -8,7 +8,7 @@ interface Dto {
     likeCount: number;
     viewCount: number;
     writerNickname: string;
-    writerProfileUrl: string;
+    writerProfileUrl: string | null;
 }
 
 export default Dto;

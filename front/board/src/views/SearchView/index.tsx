@@ -9,40 +9,39 @@ import { BOARD_LIST } from 'src/mock';
 import BoardListItem from 'src/components/BoardListItem';
 import { getPageCount } from 'src/utils';
 import { usePagingHook } from 'src/hooks';
+import axios, { AxiosResponse } from 'axios';
+import ResponseDto from 'src/apis/response';
+import { GetSearchListResponseDto } from 'src/apis/response/board';
+import { GET_SEARCH_LIST_URL } from 'src/constants/api';
 
 export default function SearchView() {
 
     const { content } = useParams();
     const { viewList, pageNumber, boardList, setBoardList, onPageHandler, COUNT } = usePagingHook(5);
 
-    // const COUNT = 5;
+   const getSearchList = () => {
+    axios.get(GET_SEARCH_LIST_URL(content as string))
+        .then((response) => getSearchListResponseHandler(response))
+        .catch((error) => getSearchListErrorHandler(error));
+   }
 
-    // const [boardList, setBoardList] = useState<IPreviewItem[]>([]);
-    // const [viewList, setViewList] = useState<IPreviewItem[]>([]);
-    // const [pageNumber, setPageNumber] = useState<number>(1);
+   const getSearchListResponseHandler = (response: AxiosResponse<any, any>) => {
+        const { result, message, data } = response.data as ResponseDto<GetSearchListResponseDto[]>;
+        if (!result || data == null) return;
+        setBoardList(data);
+   }
 
-    // const onPageHandler = (page: number) => {
-    //     setPageNumber(page);
-
-    //     const tmpList: IPreviewItem[] = [];
-    //     const startIndex = COUNT * (page - 1);
-    //     const endIndex = COUNT * page - 1;
-
-    //     for (let index = startIndex; index <= endIndex; index++) {
-    //         if (boardList.length < index + 1) break;
-    //         tmpList.push(boardList[index]);
-    //     }
-
-    //     setViewList(tmpList);
-    // }
+   const getSearchListErrorHandler = (error: any) => {
+    console.log(error.message);
+   }
 
     useEffect(() => {
         //# array.filter(요소 => 조건)
         //? 특정한 조건에 부합하는 요소만 모아서 새로운 배열로 만들어 반환하는 메서드
         //# string.inclues(검색할 문자열)
         //? 해당 문자열에서 검색할 문자열이 존재한다면 true, 아니면 false를 반환하는 메서드
-        const tmp = BOARD_LIST.filter((board) => board.boardTitle.includes(content as string));
-        setBoardList(tmp);
+        //const tmp = BOARD_LIST.filter((board) => board.boardTitle.includes(content as string));
+        getSearchList();
     }, [content]);
 
     // useEffect(()=> {
@@ -60,7 +59,7 @@ export default function SearchView() {
             <Grid container spacing={3}>
                 <Grid item sm={12} md={8}>
                     <Stack spacing={2}>
-                        {viewList.length === 0 ? (<Box sx={{ height: '416px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Typography sx={{ fontSize: '24px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.4)' }}>검색결과가 없습니다.</Typography></Box>) : viewList.map((boardItem) => (<BoardListItem item={boardItem as IPreviewItem} />))}
+                        {viewList.length === 0 ? (<Box sx={{ height: '416px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Typography sx={{ fontSize: '24px', fontWeight: 500, color: 'rgba(0, 0, 0, 0.4)' }}>검색결과가 없습니다.</Typography></Box>) : viewList.map((boardItem) => (<BoardListItem item={boardItem as GetSearchListResponseDto} />))}
                     </Stack>
                 </Grid>
                 <Grid item sm={12} md={4}>

@@ -1,7 +1,7 @@
 interface Dto {
   board: {
     boardContent: string;
-    boardImgUrl: string;
+    boardImgUrl: string | null;
     boardNumber: number;
     boardTitle: string;
     boardWriteDatetime: string;
@@ -10,7 +10,7 @@ interface Dto {
     viewCount: number;
     writerEmail: string;
     writerNickname: string;
-    writerProfileUrl: string;
+    writerProfileUrl: string | null;
   };
   commentList: [
     {
@@ -20,7 +20,7 @@ interface Dto {
       writeDatetime: string;
       writerEmail: string;
       writerNickname: string;
-      writerProfileUrl: string;
+      writerProfileUrl: string | null;
     }
   ];
   likeList: [
@@ -28,7 +28,7 @@ interface Dto {
       boardNumber: number;
       userEmail: string;
       userNickname: string;
-      userProfileUrl: string;
+      userProfileUrl: string | null;
     }
   ];
 }
