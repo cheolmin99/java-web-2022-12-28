@@ -11,6 +11,13 @@ import MyPageView from './views/MyPageView';
 import BoardWriteView from './views/Board/BoardWriteView';
 import BoardUpdateView from './views/Board/BoardUpdateView';
 import BoardDetailView from './views/Board/BoardDetailView';
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { useUserStore } from './stores';
+import axios, { AxiosResponse } from 'axios';
+import ResponseDto from './apis/response';
+import { authorizationHeader, GET_USER_URL } from './constants/api';
+import { GetUserResponseDto } from './apis/response/user';
 
 //# Router 설계 
 //? 1. 'main' path 작성 : '/'
@@ -24,6 +31,32 @@ import BoardDetailView from './views/Board/BoardDetailView';
 function App() {
 
   const path = useLocation();
+  const { setUser } = useUserStore();
+  const [cookies] = useCookies();
+
+  const getUser = (accessToken: string) => {
+    axios.get(GET_USER_URL, authorizationHeader(accessToken))
+    .then((response) => getUserResponseHandler(response))
+    .catch((error) => getUserErrorHandler(error));
+  }
+
+  const getUserResponseHandler = (response: AxiosResponse<any, any>) => {
+    const { result, message, data } = response.data as ResponseDto<any>;
+    if (!result || !data) {
+      return;
+    }
+    const user = data as GetUserResponseDto;
+    setUser(user);
+  }
+
+  const getUserErrorHandler = (error: any) => {
+    console.log(error.message);
+  }
+
+  useEffect(() => {
+    const accessToken = cookies.accessToken;
+    if (accessToken) getUser(accessToken);
+  }, []);
 
   return (
     <>

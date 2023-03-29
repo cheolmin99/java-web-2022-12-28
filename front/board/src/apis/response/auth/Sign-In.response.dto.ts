@@ -1,4 +1,4 @@
-interface ResponseDto {
+interface Dto {
     address: string;
     email: string;
     expiredTime: number;
@@ -8,4 +8,4 @@ interface ResponseDto {
     token: string;
 }
 
-export default ResponseDto;
+export default Dto;
