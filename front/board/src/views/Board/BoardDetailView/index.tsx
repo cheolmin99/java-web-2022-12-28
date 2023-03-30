@@ -36,7 +36,6 @@ export default function BoardDetailView() {
 
     const [likeList, setLikeList] = useState<Liky[]>([]);
     const [openComment, setOpenComment] = useState<boolean>(false);
-    const [commentList, setCommentList] = useState<Comment[]>([]);
 
     const { boardList, setBoardList, viewList, COUNT, pageNumber, onPageHandler } = usePagingHook(3);
 
@@ -60,8 +59,11 @@ export default function BoardDetailView() {
         }
         const { board, commentList, likeList } = data;
         setBoard(board);
-        setCommentList(commentList);
+        // 댓글 리스트를 3개까지 보여주는
+        setBoardList(commentList);
         setLikeList(likeList);
+        const owner = user !== null && board.writerEmail === user?.email;
+        setMenuFlag(owner);
     }
 
     const getBoardErrorHandler = (error: any) => {
@@ -84,21 +86,7 @@ export default function BoardDetailView() {
             navigator('/');
             return;
         }
-        //? BOARD_LIST에서 boardNumber에 해당하는 board를 가져옴
-        const board = BOARD_LIST.find((boardItem) => boardItem.boardNumber === parseInt(boardNumber));
-        //? 검색한 결과가 존재하는지 검증
-        if (!board) {
-            navigator('/');
-            return;
-        }
-
-        setLikeList(LIKE_LIST);
-
-        const owner = user !== null && user.nickname === board.writerNickname;
-        setMenuFlag(owner);
-        setBoard(board);
-
-        setBoardList(COMMENT_LIST);
+        getBoard();
     }, [])
 
   return (
@@ -108,10 +96,10 @@ export default function BoardDetailView() {
                 <Typography sx={{ fontSize: '32px', fontWeight: 500 }}>{board?.boardTitle}</Typography>
                 <Box sx={{ mt: '20px', display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar src={board?.writerProfile} sx={{ height: '32px', width: '32px', mr: '8px' }} />
+                        <Avatar src={board?.writerProfileUrl ? board?.writerProfileUrl : ''} sx={{ height: '32px', width: '32px', mr: '8px' }} />
                         <Typography sx={{ mr: '8px', fontSize: '16px', fontWeight: 500 }}>{board?.writerNickname}</Typography>
                         <Divider sx={{ mr: '8px' }} orientation='vertical' variant='middle' flexItem />
-                        <Typography sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.4 }}>{board?.writeDate}</Typography>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 400, opacity: 0.4 }}>{board?.boardWriteDatetime}</Typography>
                     </Box>
                     { menuFlag && (
                         <IconButton onClick={(event) => onMenuClickHandler(event)}>
@@ -128,7 +116,7 @@ export default function BoardDetailView() {
             <Divider sx={{ m: '40px 0px' }} />
             <Box>
                 <Typography sx={{ fontSize: '18px', fontWeight: 500, opacity: 0.7 }}>{board?.boardContent}</Typography>
-                { board?.img && (<Box sx={{ width: '100%', mt: '20px' }} component='img' src={board?.img} />) }
+                { board?.boardImgUrl && (<Box sx={{ width: '100%', mt: '20px' }} component='img' src={board?.boardImgUrl} />) }
             </Box>
             <Box sx={{ display: 'flex', mt: '20px' }}>
                 <Box sx={{ mr: '20px', display: 'flex' }}>
@@ -172,7 +160,7 @@ export default function BoardDetailView() {
                 <Box sx={{ p: '20px' }}>
                     <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>댓글 {boardList.length}</Typography>
                     <Stack sx={{ p: '20px 0px' }} spacing={3.75}>
-                        {viewList.map((commentItem) => (<CommentListItem item={commentItem as ICommentItem} />))}
+                        {viewList.map((commentItem) => (<CommentListItem item={commentItem as Comment} />))}
                     </Stack>
                 </Box>
                 <Divider />
