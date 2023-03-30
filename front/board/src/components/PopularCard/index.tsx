@@ -6,16 +6,12 @@ import { useNavigate } from 'react-router-dom';
 
 interface Props {
   title: string;
+  popularList: string[];
 }
 
-export default function PopularCard({ title }: Props) {
+export default function PopularCard({ title, popularList }: Props) {
   
-  const [popularList, setPopularList] = useState<string[]>([]);
   const navigator = useNavigate();
-
-  useEffect(() => {
-    // setPopularList(POPULAR_LIST);
-  }, []);
 
   return (
     <Card variant='outlined' sx={{ p: '24px 12px 26px 24px' }}>

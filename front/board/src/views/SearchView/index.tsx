@@ -11,18 +11,25 @@ import { getPageCount } from 'src/utils';
 import { usePagingHook } from 'src/hooks';
 import axios, { AxiosResponse } from 'axios';
 import ResponseDto from 'src/apis/response';
-import { GetSearchListResponseDto } from 'src/apis/response/board';
-import { GET_SEARCH_LIST_URL } from 'src/constants/api';
+import { GetSearchListResponseDto, GetTop15RelatedSearchWordResponseDto } from 'src/apis/response/board';
+import { GET_SEARCH_LIST_URL, GET_TOP15_RELATED_SEARCH_WORD_URL } from 'src/constants/api';
 
 export default function SearchView() {
 
     const { content } = useParams();
     const { viewList, pageNumber, boardList, setBoardList, onPageHandler, COUNT } = usePagingHook(5);
+    const [popularList, setPopularList] = useState<string[]>([]);
 
    const getSearchList = () => {
     axios.get(GET_SEARCH_LIST_URL(content as string))
         .then((response) => getSearchListResponseHandler(response))
         .catch((error) => getSearchListErrorHandler(error));
+   }
+
+   const getTop15RelatedSearchWord = () => {
+    axios.get(GET_TOP15_RELATED_SEARCH_WORD_URL(content as string))
+        .then((response) => getTop15RelatedSearchWordResponseHandler(response))
+        .catch((error) => getTop15RelatedSearchWordErrorHandler(error));
    }
 
    const getSearchListResponseHandler = (response: AxiosResponse<any, any>) => {
@@ -35,6 +42,16 @@ export default function SearchView() {
     console.log(error.message);
    }
 
+   const getTop15RelatedSearchWordResponseHandler = (response: AxiosResponse<any, any>) => {
+    const { result, message, data } = response.data as ResponseDto<GetTop15RelatedSearchWordResponseDto>;
+    if (!result || !data) return;
+    setPopularList(data.top15SearchWordList);
+   }
+
+   const getTop15RelatedSearchWordErrorHandler = (error: any) => {
+    console.log(error.message);
+   }
+
     useEffect(() => {
         //# array.filter(요소 => 조건)
         //? 특정한 조건에 부합하는 요소만 모아서 새로운 배열로 만들어 반환하는 메서드
@@ -42,11 +59,8 @@ export default function SearchView() {
         //? 해당 문자열에서 검색할 문자열이 존재한다면 true, 아니면 false를 반환하는 메서드
         //const tmp = BOARD_LIST.filter((board) => board.boardTitle.includes(content as string));
         getSearchList();
+        getTop15RelatedSearchWord();
     }, [content]);
-
-    // useEffect(()=> {
-    //     onPageHandler(pageNumber);
-    // }, [boardList]);
 
   return (
     <Box sx={{ p: '40px 120px', backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
@@ -63,7 +77,7 @@ export default function SearchView() {
                     </Stack>
                 </Grid>
                 <Grid item sm={12} md={4}>
-                    <PopularCard title='연관 검색어' />
+                    <PopularCard title='연관 검색어' popularList={popularList}/>
                 </Grid>
             </Grid>
         </Box>
