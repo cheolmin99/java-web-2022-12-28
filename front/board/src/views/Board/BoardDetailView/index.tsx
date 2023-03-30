@@ -18,7 +18,6 @@ import { usePagingHook } from 'src/hooks';
 import { useUserStore } from 'src/stores';
 import { Board, Comment, ICommentItem, ILikeUser, IPreviewItem, Liky } from 'src/interfaces';
 import { getPageCount } from 'src/utils';
-import { BOARD_LIST, COMMENT_LIST, LIKE_LIST } from 'src/mock';
 import axios, { AxiosResponse } from 'axios';
 import ResponseDto from 'src/apis/response';
 import { GetBoardResponseDto } from 'src/apis/response/board';
@@ -36,6 +35,8 @@ export default function BoardDetailView() {
 
     const [likeList, setLikeList] = useState<Liky[]>([]);
     const [openComment, setOpenComment] = useState<boolean>(false);
+
+    let isLoad = false;
 
     const { boardList, setBoardList, viewList, COUNT, pageNumber, onPageHandler } = usePagingHook(3);
 
@@ -81,13 +82,15 @@ export default function BoardDetailView() {
     }
 
     useEffect(() => {
+        if (isLoad) return;
         //? boardNumber가 존재하는지 검증
         if (!boardNumber) {
             navigator('/');
             return;
         }
+        isLoad = (true);
         getBoard();
-    }, [])
+    }, []);
 
   return (
     <Box sx={{ p: '100px 222px' }}>
