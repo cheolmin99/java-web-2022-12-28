@@ -4,14 +4,15 @@ import { Avatar, Box, Card, CardActionArea, Typography } from '@mui/material'
 import { IPreviewItem } from 'src/interfaces'
 import BoardListItem from '../BoardListItem';
 import { useNavigate } from 'react-router-dom';
+import { GetTop3ListResponseDto } from 'src/apis/response/board';
 
 interface Props {
-    previewItem: IPreviewItem
+    previewItem: GetTop3ListResponseDto
 }
 
 export default function PreviewCard({ previewItem }: Props) {
 
-    const backgroundImage = `url(${previewItem.img})`;
+    const backgroundImage = `url(${previewItem.boardImgUrl})`;
 
     const navigator = useNavigate();
 
@@ -22,11 +23,11 @@ export default function PreviewCard({ previewItem }: Props) {
                 <Box sx={{ p: '24px' }}>
                     <Box sx={{ display: 'flex' }}>
                         <Box sx={{ mr: '8px' }}>
-                            <Avatar alt="Remy Sharp" src={ previewItem.writerProfile } />
+                            <Avatar alt="Remy Sharp" src={ previewItem.writerProfileUrl ? previewItem.writerProfileUrl : '' } />
                         </Box>
                         <Box>
                             <Typography sx={{ fontSize: '12px', fontWeight: 500, color: '#ffffff' }}>{ previewItem.writerNickname }</Typography>
-                            <Typography sx={{ mt: '2px', fontSize: '12px', fontWeight: 400, color: 'rgba(255, 255, 255, 0.7)' }}>{ previewItem.writeDate }</Typography>
+                            <Typography sx={{ mt: '2px', fontSize: '12px', fontWeight: 400, color: 'rgba(255, 255, 255, 0.7)' }}>{ previewItem.boardWriteDatetime }</Typography>
                         </Box>
                     </Box>
                     <Box sx={{ mt: '16px', mb: '16px' }}>
