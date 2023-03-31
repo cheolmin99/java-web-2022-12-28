@@ -41,13 +41,19 @@ import com.jihoon.board.service.BoardService;
 
 @Service
 public class BoardServiceImplements implements BoardService {
-    
-    @Autowired private BoardRepository boardRepository;
-    @Autowired private CommentRepository commentRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private LikyRepository likyRepository;
-    @Autowired private SearchWordLogRepository searchWordLogRepository;
-    @Autowired private RelatedSearchWordRepository relatedSearchWordRepository;
+
+    @Autowired
+    private BoardRepository boardRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private LikyRepository likyRepository;
+    @Autowired
+    private SearchWordLogRepository searchWordLogRepository;
+    @Autowired
+    private RelatedSearchWordRepository relatedSearchWordRepository;
 
     public ResponseDto<PostBoardResponseDto> postBoard(String email, PostBoardDto dto) {
 
@@ -56,14 +62,15 @@ public class BoardServiceImplements implements BoardService {
         try {
 
             UserEntity userEntity = userRepository.findByEmail(email);
-            if (userEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            if (userEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
 
             BoardEntity boardEntity = new BoardEntity(userEntity, dto);
             boardRepository.save(boardEntity);
 
             data = new PostBoardResponseDto(boardEntity);
 
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
@@ -80,18 +87,19 @@ public class BoardServiceImplements implements BoardService {
 
         try {
             UserEntity userEntity = userRepository.findByEmail(email);
-            if (userEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
-            
+            if (userEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
+            if (boardEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
 
             LikyEntity likyEntity = likyRepository.findByUserEmailAndBoardNumber(email, boardNumber);
             if (likyEntity == null) {
                 likyEntity = new LikyEntity(userEntity, boardNumber);
                 likyRepository.save(likyEntity);
                 boardEntity.increaseLikeCount();
-            }
-            else {
+            } else {
                 likyRepository.delete(likyEntity);
                 boardEntity.decreaseLikeCount();
             }
@@ -119,10 +127,12 @@ public class BoardServiceImplements implements BoardService {
         try {
 
             UserEntity userEntity = userRepository.findByEmail(email);
-            if (userEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
+            if (userEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_USER);
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
+            if (boardEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
 
             CommentEntity commentEntity = new CommentEntity(userEntity, dto);
             commentRepository.save(commentEntity);
@@ -151,10 +161,11 @@ public class BoardServiceImplements implements BoardService {
         try {
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
+            if (boardEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
             List<LikyEntity> likyList = likyRepository.findByBoardNumber(boardNumber);
             List<CommentEntity> commentList = commentRepository.findByBoardNumberOrderByWriteDatetimeDesc(boardNumber);
-            
+
             boardEntity.increaseViewCount();
             boardRepository.save(boardEntity);
 
@@ -178,7 +189,7 @@ public class BoardServiceImplements implements BoardService {
             List<BoardEntity> boardEntityList = boardRepository.findByOrderByBoardWriteDatetimeDesc();
             data = GetListResponseDto.copyList(boardEntityList);
 
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
@@ -215,11 +226,14 @@ public class BoardServiceImplements implements BoardService {
             searchWordLogRepository.save(searchWordLogEntity);
 
             if (previousSearchWord != null && !previousSearchWord.isBlank()) {
-                RelatedSearchWordEntity relatedSearchWordEntity = new RelatedSearchWordEntity(searchWord, previousSearchWord);
+                RelatedSearchWordEntity relatedSearchWordEntity = new RelatedSearchWordEntity(searchWord,
+                        previousSearchWord);
                 relatedSearchWordRepository.save(relatedSearchWordEntity);
             }
 
-            List<BoardEntity> boardList = boardRepository.findByBoardTitleContainsOrBoardContentContainsOrderByBoardWriteDatetimeDesc(searchWord, searchWord);
+            List<BoardEntity> boardList = boardRepository
+                    .findByBoardTitleContainsOrBoardContentContainsOrderByBoardWriteDatetimeDesc(searchWord,
+                            searchWord);
             data = GetSearchListResponseDto.copyList(boardList);
 
         } catch (Exception exception) {
@@ -250,8 +264,7 @@ public class BoardServiceImplements implements BoardService {
 
         try {
 
-            List<RelatedSearchWordResultSet> relatedSearchWordList = 
-                relatedSearchWordRepository.findTop15(searchWord);
+            List<RelatedSearchWordResultSet> relatedSearchWordList = relatedSearchWordRepository.findTop15(searchWord);
             data = GetTop15RelatedSearchWordResponseDto.copyList(relatedSearchWordList);
 
         } catch (Exception exception) {
@@ -271,10 +284,12 @@ public class BoardServiceImplements implements BoardService {
         try {
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
+            if (boardEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
 
             boolean isEqualWriter = email.equals(boardEntity.getWriterEmail());
-            if (!isEqualWriter) return ResponseDto.setFailed(ResponseMessage.NOT_PERMISSION);
+            if (!isEqualWriter)
+                return ResponseDto.setFailed(ResponseMessage.NOT_PERMISSION);
 
             boardEntity.patch(dto);
             boardRepository.save(boardEntity);
@@ -300,10 +315,15 @@ public class BoardServiceImplements implements BoardService {
         try {
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
+            if (boardEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_BOARD);
 
             boolean isEqualWriter = email.equals(boardEntity.getWriterEmail());
-            if (!isEqualWriter) return ResponseDto.setFailed(ResponseMessage.NOT_PERMISSION);
+            if (!isEqualWriter)
+                return ResponseDto.setFailed(ResponseMessage.NOT_PERMISSION);
+
+            commentRepository.deleteByBoardNumber(boardNumber);
+            likyRepository.deleteByBoardNumber(boardNumber);
 
             boardRepository.delete(boardEntity);
             data = new DeleteBoardResponseDto(true);
@@ -318,7 +338,7 @@ public class BoardServiceImplements implements BoardService {
     }
 
     public ResponseDto<List<GetTop3ListResponseDto>> getTop3List() {
-        
+
         List<GetTop3ListResponseDto> data = null;
 
         try {

@@ -7,15 +7,53 @@ import CreateIcon from '@mui/icons-material/Create';
 
 import { BOARD_LIST } from 'src/mock';
 import { useUserStore } from 'src/stores';
+import axios, { AxiosResponse } from 'axios';
+import { GET_BOARD_URL } from 'src/constants/api';
+import ResponseDto from 'src/apis/response';
+import { GetBoardResponseDto } from 'src/apis/response/board';
+import { useCookies } from 'react-cookie';
 
 export default function BoardUpdateView() {
 
+  const [cookies] = useCookies();
   const [boardTitle, setBoardTitle] = useState<string>('');
   const [boardContent, setBoardContent] = useState<string>('');
-  const { user } = useUserStore();
+  const [boardImgUrl, setBoardImgUrl] = useState<string>('');
 
+  const { user } = useUserStore();
   const { boardNumber } = useParams();
+
   const navigator = useNavigate();
+
+  const accessToken = cookies.accessToken;
+
+  const getBoard = () => {
+    axios.get(GET_BOARD_URL(boardNumber as string))
+        .then((resposne) => getBoardResponseHandler(resposne))
+        .catch((error) => getBoardErrorHandler(error));
+  }
+
+  const getBoardResponseHandler = (response: AxiosResponse<any, any>) => {
+    const { result, message, data } = response.data as ResponseDto<GetBoardResponseDto>;
+    if (!result || !data) {
+      alert(message);
+      navigator('/');
+      return;
+    }
+    const { boardTitle, boardContent, boardImgUrl, writerEmail } = data.board;
+    if (writerEmail !== user?.email) {
+      alert('권한이 없습니다.');
+      navigator('/');
+      return;
+    }
+    setBoardTitle(boardTitle);
+    setBoardContent(boardContent);
+    if (boardImgUrl) setBoardImgUrl(boardImgUrl);
+  }
+
+  const getBoardErrorHandler = (error: any) => {
+    console.log(error.message);
+  }
 
   const onUpdateHandler = () => {
     //? 제목과 내용이 존재하는지 검증
@@ -23,24 +61,6 @@ export default function BoardUpdateView() {
       alert('모든 내용을 입력해주세요.');
       return;
     }
-    //? 업데이트 기능 수행
-    //# Board table 
-    //^ boardNumber INT AI PK
-    //^ boardTitle TEXT NN
-    //^ boardContent TEXT NN
-    //^ writeDate DATETIME NN
-    //^ writerEmail VARCHAR(45) FK NN
-    //^ likeCount INT default 0
-    //^ commentCount INT default 0
-    //^ viewCount Int default 0
-
-    //? User 테이블에서 해당 유저가 있는지 확인
-    //? Board 테이블에서 해당 board 레코드가 있는지 확인
-    //? board 레코드의 작성자가 userEmail과 동일한지 확인
-    //? UPDATE Board SET boardTitle = ?, boardContent = ? WHERE boardNumber = ?
-
-    //? back end로 boardTitle, boardContent, boardNumber를 넘겨주면 됨
-
     navigator('/myPage');
   }
 
@@ -51,27 +71,13 @@ export default function BoardUpdateView() {
       navigator('/');
       return;
     }
-    //? pathVariable로 전달받은 boardNumber에 해당하는 board 데이터를 검색해 옴
-    const board = BOARD_LIST.find((item) => item.boardNumber === parseInt(boardNumber));
-    //? 검색결과가 존재하지 않으면
-    //? main 화면으로 돌려보냄
-    if (!board) {
-      navigator('/');
-      return;
-    }
+   getBoard();
     //? 현재 로그인되어 있는지 검증
-    if (!user) {
+    if (!accessToken) {
       navigator('/auth');
       return;
     }
-    //? 검색된 board의 작성자가 로그인한 user와 일치하는지 검증
-    if (board.writerNickname !== user.nickname) {
-      navigator('/');
-      return;
-    }
-
-    setBoardTitle(board.boardTitle);
-    setBoardContent(board.boardContent);
+    getBoard();
   }, []);
 
   //? 일반적으로 수정페이지는 작성페이지와 거의 똑같음
