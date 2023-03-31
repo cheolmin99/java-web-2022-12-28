@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 import { Box, Divider, Fab, IconButton, Input } from '@mui/material';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -9,9 +9,11 @@ import ResponseDto from 'src/apis/response';
 import { PostBoardResponseDto } from 'src/apis/response/board';
 import { useCookies } from 'react-cookie';
 import { PostBoardDto } from 'src/apis/request/board';
-import { authorizationHeader, POST_BOARD_URL } from 'src/constants/api';
+import { authorizationHeader, FILE_UPLOAD_URL, mutipartHeader, POST_BOARD_URL } from 'src/constants/api';
 
 export default function BoardWriteView() {
+
+  const imageRef = useRef<HTMLInputElement | null>(null);
 
   const [cookies] = useCookies();
   const [boardTitle, setBoardTitle] = useState<string>('');
@@ -42,6 +44,31 @@ export default function BoardWriteView() {
     console.log(error.message);
   }
 
+  const onImageUploadButtonHandler = () => {
+    if (!imageRef.current) return;
+    imageRef.current.click();
+  }
+
+  const onImageUploadChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return;
+    const data = new FormData();
+    data.append('file', event.target.files[0]);
+
+    axios.post(FILE_UPLOAD_URL, data, mutipartHeader())
+        .then((response) => imageUploadResponseHandler(response))
+        .catch((error) => imageUploadErrorHandler(error));
+  }
+
+  const imageUploadResponseHandler = (response: AxiosResponse<any, any>) => {
+    const imageUrl = response.data as string;
+    if (!imageUrl) return;
+    setBoardImgUrl(imageUrl);
+  }
+
+  const imageUploadErrorHandler = (error: any) => {
+    console.log(error.message);
+  }
+
   const onWriteHandler = () => {
     //? 제목 및 내용 검증 (값이 존재하는지)
     if (!boardTitle.trim() || !boardContent.trim()) {
@@ -65,9 +92,15 @@ export default function BoardWriteView() {
         <Input fullWidth disableUnderline placeholder='제목을 입력하세요.' sx={{ fontSize: '32px', fontWeight: 500 }} onChange={(event) => setBoardTitle(event.target.value)} />
         <Divider sx={{ m: '40px 0px' }} />
         <Box sx={{ display: 'flex', alignItems: 'start' }}>
-          <Input fullWidth disableUnderline multiline minRows={20} placeholder='본문을 작성해주세요.' sx={{ fontSize: '18px', fontWeight: 500, lineHeight: '150%' }} onChange={(event) => setBoardContent(event.target.value)}/>
-          <IconButton>
+          
+          <Box sx={{ width: '100%' }}>
+            <Input fullWidth disableUnderline multiline minRows={5} placeholder='본문을 작성해주세요.' sx={{ fontSize: '18px', fontWeight: 500, lineHeight: '150%' }} onChange={(event) => setBoardContent(event.target.value)}/>
+            <Box sx={{ width: '100%' }} component='img' src={boardImgUrl} />
+          </Box>
+          
+          <IconButton onClick={() => onImageUploadButtonHandler()}>
             <ImageOutlinedIcon />
+            <input ref={imageRef} hidden type='file' accept='image/*' onChange={(event) => onImageUploadChangeHandler(event)}/>
           </IconButton>
         </Box>
       </Box>
