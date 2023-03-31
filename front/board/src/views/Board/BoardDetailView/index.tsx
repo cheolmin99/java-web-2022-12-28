@@ -92,6 +92,12 @@ export default function BoardDetailView() {
         getBoard();
     }, []);
 
+    useEffect(() => {
+        if (!user) return;
+        const like = likeList.find((like) => like.userEmail === user.email);
+        setLikeStatus(like !== undefined && like !== null);
+    }, [likeList]);
+
   return (
     <Box sx={{ p: '100px 222px' }}>
         <Box>
