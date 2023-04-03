@@ -17,7 +17,7 @@ import CommentListItem from 'src/components/CommentListItem';
 import LikeListItem from 'src/components/LikeListItem';
 import { usePagingHook } from 'src/hooks';
 import { useUserStore } from 'src/stores';
-import { Board, Comment, ICommentItem, ILikeUser, IPreviewItem, Liky } from 'src/interfaces';
+import { Board, Comment, Liky } from 'src/interfaces';
 import { getPageCount } from 'src/utils';
 import axios, { AxiosResponse } from 'axios';
 import ResponseDto from 'src/apis/response';
@@ -51,7 +51,6 @@ export default function BoardDetailView() {
     const { boardList, setBoardList, viewList, COUNT, pageNumber, onPageHandler } = usePagingHook(3);
 
     const { boardNumber } = useParams();
-    
 
     const { user } = useUserStore();
 

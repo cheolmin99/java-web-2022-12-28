@@ -1,5 +1,6 @@
 import { Avatar, Box, Divider, Typography } from '@mui/material';
-import { Comment, ICommentItem } from 'src/interfaces';
+
+import { Comment } from 'src/interfaces';
 
 interface Props {
   item: Comment

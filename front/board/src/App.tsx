@@ -1,6 +1,10 @@
 import './App.css';
 
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 import { Routes, Route, useLocation } from 'react-router-dom';
+
+import axios, { AxiosResponse } from 'axios';
 
 import AuthenticationView from './views/AuthenticationView';
 import NavigationBar from './views/NavigationBar';
@@ -11,10 +15,7 @@ import MyPageView from './views/MyPageView';
 import BoardWriteView from './views/Board/BoardWriteView';
 import BoardUpdateView from './views/Board/BoardUpdateView';
 import BoardDetailView from './views/Board/BoardDetailView';
-import { useEffect } from 'react';
-import { useCookies } from 'react-cookie';
 import { useUserStore } from './stores';
-import axios, { AxiosResponse } from 'axios';
 import ResponseDto from './apis/response';
 import { authorizationHeader, GET_USER_URL } from './constants/api';
 import { GetUserResponseDto } from './apis/response/user';

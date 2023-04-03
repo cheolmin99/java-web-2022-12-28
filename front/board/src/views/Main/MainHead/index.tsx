@@ -1,34 +1,38 @@
-import { Box, Card, Grid, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+
+import { Box, Grid, Typography } from '@mui/material'
 import axios, { AxiosResponse } from 'axios';
-import React, { useEffect, useState } from 'react'
+
+import PreviewCard from 'src/components/PreviewCard'
 import ResponseDto from 'src/apis/response';
 import { GetTop3ListResponseDto } from 'src/apis/response/board';
-import PreviewCard from 'src/components/PreviewCard'
 import { GET_TOP3_LIST_URL } from 'src/constants/api';
-import { IPreviewItem } from 'src/interfaces';
-
-import { TOP3 } from 'src/mock';
 
 export default function MainHead() {
 
+    //          Hook          //
     const [top3List, setTop3List] = useState<GetTop3ListResponseDto[]>([]);
 
+    //          Event Handler          //
     const getTop3List = () => {
         axios.get(GET_TOP3_LIST_URL)
             .then((response) => getTop3ListResponseHandler(response))
             .catch((error) => getTop3ListErrorHandler(error));
     }
 
+    //           Response Handler           //
     const getTop3ListResponseHandler = (response: AxiosResponse<any, any>) => {
         const { result, message, data } = response.data as ResponseDto<GetTop3ListResponseDto[]>;
         if (!result || data === null) return;
         setTop3List(data);
     }
 
+    //          Error Handler          //
     const getTop3ListErrorHandler = (error: any) => {
         console.log(error.message);
     }
 
+    //          Use Effect         //
     useEffect(() => {
         getTop3List();
     }, []);

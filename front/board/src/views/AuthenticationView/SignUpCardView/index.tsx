@@ -163,12 +163,14 @@ export default function SignUpCardView({ setLoginView }: Props) {
 
   }
 
+  //           Response Handler           //
   const signUpResponseHandler = (response: AxiosResponse<any, any>) => {
     const { result, message } = response.data as ResponseDto<SignUpResponseDto>;
     if(result) setLoginView(true);
     else alert(message);
   }
 
+  //          Error Handler          //
   const signUpErrorHandler = (error: any) => {
     console.log(error.response.status);
   }

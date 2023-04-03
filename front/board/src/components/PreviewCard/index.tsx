@@ -1,9 +1,7 @@
-import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 import { Avatar, Box, Card, CardActionArea, Typography } from '@mui/material'
-import { IPreviewItem } from 'src/interfaces'
-import BoardListItem from '../BoardListItem';
-import { useNavigate } from 'react-router-dom';
+
 import { GetTop3ListResponseDto } from 'src/apis/response/board';
 
 interface Props {
@@ -12,9 +10,10 @@ interface Props {
 
 export default function PreviewCard({ previewItem }: Props) {
 
-    const backgroundImage = `url(${previewItem.boardImgUrl})`;
-
+    //          Hook          //
     const navigator = useNavigate();
+
+    const backgroundImage = `url(${previewItem.boardImgUrl})`;
 
   return (
     <Card>
