@@ -1,34 +1,61 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useCookies } from 'react-cookie';
 
+import axios, { AxiosResponse } from 'axios';
 import { Box, Divider, Fab, IconButton, Input } from '@mui/material';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import CreateIcon from '@mui/icons-material/Create';
 
-import { BOARD_LIST } from 'src/mock';
 import { useUserStore } from 'src/stores';
-import axios, { AxiosResponse } from 'axios';
 import { FILE_UPLOAD_URL, GET_BOARD_URL, PATCH_BOARD_URL, authorizationHeader, mutipartHeader } from 'src/constants/api';
 import ResponseDto from 'src/apis/response';
 import { GetBoardResponseDto, PatchBoardResponseDto } from 'src/apis/response/board';
-import { useCookies } from 'react-cookie';
 import { PatchBoardDto } from 'src/apis/request/board';
 
 export default function BoardUpdateView() {
 
+  //          Hook          //
+  const navigator = useNavigate();
+
   const imageRef = useRef<HTMLInputElement | null>(null);
+
+  const {user} = useUserStore();
+  const {boardNumber} = useParams();
 
   const [cookies] = useCookies();
   const [boardTitle, setBoardTitle] = useState<string>('');
   const [boardContent, setBoardContent] = useState<string>('');
   const [boardImgUrl, setBoardImgUrl] = useState<string>('');
 
-  const { user } = useUserStore();
-  const { boardNumber } = useParams();
-
-  const navigator = useNavigate();
-
   const accessToken = cookies.accessToken;
+
+  //          Event Handler          //
+  const onImageUploadButtonHandler = () => {
+    if (!imageRef.current) return;
+    imageRef.current.click();
+  }
+
+  const onUpdateButtonHandler = () => {
+    //? 제목과 내용이 존재하는지 검증
+    if (!boardTitle.trim() || !boardContent.trim()) {
+      alert('모든 내용을 입력해주세요.');
+      return;
+    }
+    patchBoard();
+  }
+
+  // Todo : BoardDetailView, BoardUpdataView, MyPageHead에서 중복
+  // Todo : Hook 또는 외부 함수로 변경 
+  const onImageUploadChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return;
+    const data = new FormData();
+    data.append('file', event.target.files[0]);
+
+    axios.post(FILE_UPLOAD_URL, data, mutipartHeader())
+        .then((response) => imageUploadResponseHandler(response))
+        .catch((error) => imageUploadErrorHandler(error));
+  }
 
   const getBoard = () => {
     axios.get(GET_BOARD_URL(boardNumber as string))
@@ -50,16 +77,7 @@ export default function BoardUpdateView() {
         .catch((error) => patchBoardErrorHandler(error));
   }
 
-  const onImageUploadChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return;
-    const data = new FormData();
-    data.append('file', event.target.files[0]);
-
-    axios.post(FILE_UPLOAD_URL, data, mutipartHeader())
-        .then((response) => imageUploadResponseHandler(response))
-        .catch((error) => imageUploadErrorHandler(error));
-  }
-
+  //          Response Handler          //
   const getBoardResponseHandler = (response: AxiosResponse<any, any>) => {
     const { result, message, data } = response.data as ResponseDto<GetBoardResponseDto>;
     if (!result || !data) {
@@ -78,8 +96,10 @@ export default function BoardUpdateView() {
     if (boardImgUrl) setBoardImgUrl(boardImgUrl);
   }
 
-  const getBoardErrorHandler = (error: any) => {
-    console.log(error.message);
+  const imageUploadResponseHandler = (response: AxiosResponse<any, any>) => {
+    const imageUrl = response.data as string;
+    if(!imageUrl) return;
+    setBoardImgUrl(imageUrl);
   }
 
   const patchBoardResponseHandler = (response: AxiosResponse<any, any>) => {
@@ -91,34 +111,20 @@ export default function BoardUpdateView() {
     navigator(`/board/detail/${boardNumber}`);
   }
 
-  const patchBoardErrorHandler = (error: any) => {
+  //           Error Handler          //
+  const getBoardErrorHandler = (error: any) => {
     console.log(error.message);
   }
 
-  const imageUploadResponseHandler = (response: AxiosResponse<any, any>) => {
-    const imageUrl = response.data as string;
-    if(!imageUrl) return;
-    setBoardImgUrl(imageUrl);
+  const patchBoardErrorHandler = (error: any) => {
+    console.log(error.message);
   }
 
   const imageUploadErrorHandler = (error: any) => {
     console.log(error.message);
   }
 
-  const onImageUploadButtonHandler = () => {
-    if (!imageRef.current) return;
-    imageRef.current.click();
-  }
-
-  const onUpdateButtonHandler = () => {
-    //? 제목과 내용이 존재하는지 검증
-    if (!boardTitle.trim() || !boardContent.trim()) {
-      alert('모든 내용을 입력해주세요.');
-      return;
-    }
-    patchBoard();
-  }
-
+  //          Use Effect          //
   useEffect(() => {
     //? 정상적이지 않은 경로로 접근을 시도했을 때
     //? main 화면으로 돌려보냄

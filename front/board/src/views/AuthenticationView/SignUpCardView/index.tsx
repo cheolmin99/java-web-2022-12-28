@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
+import axios, { AxiosResponse } from "axios";
 import {
   Box,
   Button,
@@ -15,14 +16,15 @@ import Visibility from "@mui/icons-material/Visibility";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 import { useSignUpStore } from 'src/stores';
-import axios, { AxiosResponse } from "axios";
 import { SignUpDto } from "src/apis/request/auth";
 import { SignUpResponseDto } from "src/apis/response/auth";
 import  ResponseDto  from "src/apis/response";
 import { SIGN_UP_URL } from "src/constants/api";
 
+//           Component          //
 function FirstPage() {
 
+  //          Hook          //
   const { email, password, passwordCheck } = useSignUpStore();
   const { setEmail, setPassword, setPasswordCheck } = useSignUpStore();
 
@@ -75,8 +77,10 @@ function FirstPage() {
   );
 }
 
+//          Component          //
 function SecondPage() {
 
+  //          Hook          //
   const { nickname, telNumber, address, addressDetail } = useSignUpStore();
   const { setNickname, setTelNumber, setAddress, setAddressDetail } = useSignUpStore();
 
@@ -108,10 +112,14 @@ interface Props {
 
 export default function SignUpCardView({ setLoginView }: Props) {
 
-  const [page, setPage] = useState<number>(1);
+  //          Hook          //
   const { email, password, passwordCheck } = useSignUpStore();
   const { nickname, telNumber, address, addressDetail } = useSignUpStore();
 
+  const [page, setPage] = useState<number>(1);
+
+
+  //          Event Handler          //
   const onNextButtonHandler = () => {
     //? 해당 문자열 변수가 빈값인지 확인
     //? 1. 해당 변수 == '';
