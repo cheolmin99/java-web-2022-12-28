@@ -20,6 +20,8 @@ export default function SearchView() {
 
     const [popularList, setPopularList] = useState<string[]>([]);
 
+    let loadFlag = true;
+
     //          Event Handler          //
    const getSearchList = () => {
     axios.get(GET_SEARCH_LIST_URL(content as string))
@@ -56,13 +58,11 @@ export default function SearchView() {
 
    //          Use Effect         //
     useEffect(() => {
-        //# array.filter(요소 => 조건)
-        //? 특정한 조건에 부합하는 요소만 모아서 새로운 배열로 만들어 반환하는 메서드
-        //# string.inclues(검색할 문자열)
-        //? 해당 문자열에서 검색할 문자열이 존재한다면 true, 아니면 false를 반환하는 메서드
-        //const tmp = BOARD_LIST.filter((board) => board.boardTitle.includes(content as string));
-        getSearchList();
-        getTop15RelatedSearchWord();
+        if (loadFlag) {
+            loadFlag = false;
+            getSearchList();
+            getTop15RelatedSearchWord();
+        } 
     }, [content]);
 
   return (

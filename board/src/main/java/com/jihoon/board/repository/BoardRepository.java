@@ -10,13 +10,15 @@ import com.jihoon.board.entity.BoardEntity;
 
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
-    
+
     public BoardEntity findByBoardNumber(int boardNumber);
 
     public List<BoardEntity> findByOrderByBoardWriteDatetimeDesc();
+
     public List<BoardEntity> findByWriterEmailOrderByBoardWriteDatetimeDesc(String writerEmail);
 
-    public List<BoardEntity> findByBoardTitleContainsOrBoardContentContainsOrderByBoardWriteDatetimeDesc(String boardTitle, String boardContent);
+    public List<BoardEntity> findByBoardTitleContainsOrBoardContentContainsOrderByBoardWriteDatetimeDesc(
+            String boardTitle, String boardContent);
 
-    public List<BoardEntity> findTop3ByOrderByLikeCountDesc();
+    public List<BoardEntity> findTop3ByBoardWriteDatetimeGreaterThanOrderByLikeCountDesc(String aWeekAgo);
 }

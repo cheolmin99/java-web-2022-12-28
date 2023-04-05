@@ -11,6 +11,7 @@ import {
   InputAdornment,
   IconButton,
   FormHelperText,
+  Checkbox,
 } from "@mui/material";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
@@ -130,7 +131,8 @@ function SecondPage({ signUpError }: SecondPageProps) {
 
   const [telNumberMessage, setTelNumberMessage] = useState<string>('');
 
-  const telNumberVauldator = /^[0-9]{0-13}$/;
+  const telNumberVauldator = /^[0-9]{0,13}$/;
+  // const telNumberVaildator = /^[0-9]{3}-[0-9]{3,4}-[0-9]{3,4}$/; 
 
   //          Event Handler          //
   const onTelNumberHandler = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -159,6 +161,11 @@ function SecondPage({ signUpError }: SecondPageProps) {
         />
       </FormControl>
       <TextField sx={{mt: '40px'}} error={signUpError} fullWidth label="상세 주소*" variant="standard" value={addressDetail} onChange={(event) => setAddressDetail(event.target.value)} />
+      <Box sx={{ display: 'flex', alignItems: 'center', mt: '24px' }}>
+        <Checkbox color="default"/>
+        <Typography sx={{mr: '4px', color: 'red' ,fontWeight: 400}}>개인정보 동의</Typography>
+        <Typography sx={{fontWeight: 700}}>더보기&gt;</Typography>
+      </Box>
     </Box>
   );
 }
