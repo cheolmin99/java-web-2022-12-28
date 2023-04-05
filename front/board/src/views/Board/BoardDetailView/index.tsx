@@ -72,10 +72,8 @@ export default function BoardDetailView() {
     }
 
     const onLikeHandler = () => {
-        if (!accessToken)  {
-            alert('로그인이 필요합니다.');
-            return;
-        }
+        if (!accessToken) return;
+        
         const data: LikeDto = { boardNumber: parseInt(boardNumber as string) };
         axios.post(LIKE_URL, data, authorizationHeader(accessToken))
             .then((response) => likeResponseHandler(response))
@@ -274,6 +272,7 @@ export default function BoardDetailView() {
                 <Box sx={{ p: '20px 0px', display: 'flex', justifyContent: 'center' }}>
                     <Pagination page={pageNumber} count={getPageCount(boardList, COUNT)} onChange={(event, value) => onPageHandler(value)} />
                 </Box>
+                { accessToken && (
                 <Box>
                     <Card variant='outlined' sx={{ p: '20px' }}>
                         <Input minRows={3} multiline disableUnderline fullWidth value={commentContent} onChange={(event) => setCommnetContent(event.target.value)} />
@@ -282,6 +281,7 @@ export default function BoardDetailView() {
                         </Box>
                     </Card>
                 </Box>
+                )}
             </Box>
         ) }
         </Box>

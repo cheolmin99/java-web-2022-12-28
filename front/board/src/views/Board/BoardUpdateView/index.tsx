@@ -160,7 +160,7 @@ export default function BoardUpdateView() {
           </IconButton>
         </Box>
       </Box>
-      <Fab sx={{ position: 'fixed', bottom: '200px', right: '248px', backgroundColor: 'rgba(0, 0, 0, 0.4)' }} onClick={onUpdateButtonHandler}>
+      <Fab sx={{ position: 'fixed', bottom: '200px', right: '248px', backgroundColor: '#999999' }} onClick={onUpdateButtonHandler}>
         <CreateIcon />
       </Fab>
     </Box>

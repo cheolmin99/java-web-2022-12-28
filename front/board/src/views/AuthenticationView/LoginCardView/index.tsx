@@ -69,7 +69,7 @@ export default function LoginCardView({ setLoginView }: Props) {
         //? 로그인 처리
         //? 쿠키에 로그인 데이터 (Token) 보관 
         const expires = getExpires(expiredTime);
-        setCookie('accessToken', token, { expires });
+        setCookie('accessToken', token, { expires, path: '/'});
         //? 스토어에 유저 데이터 보관
         setUser(user);
         navigator('/');
