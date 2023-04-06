@@ -19,21 +19,22 @@ import com.jihoon.board.filter.JwtAuthenticationFilter;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
-    
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     protected SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-            .cors().and()
-            .csrf().disable()
-            .httpBasic().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests()
-            .antMatchers("/api/board/my-list").authenticated()
-            .antMatchers("/auth/**", "/file/**", "/web-socket/**", "/api/send-mail").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/board/**").permitAll()
-            .anyRequest().authenticated().and()
-            .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                .cors().and()
+                .csrf().disable()
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests()
+                .antMatchers("/api/board/my-list").authenticated()
+                .antMatchers("/auth/**", "/file/**", "/web-socket/**", "/api/send-mail", "/api/validate/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/board/**").permitAll()
+                .anyRequest().authenticated().and()
+                .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -43,7 +44,7 @@ public class WebSecurityConfig {
     @Bean
     protected WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-            .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/swagger/**", "/v2/api-docs", "/webjars/**");
+                .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/swagger/**", "/v2/api-docs", "/webjars/**");
     }
 
 }

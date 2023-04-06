@@ -40,7 +40,7 @@ public class UserController {
     private final String GET_USER = "/";
     private final String VALIDATE_EMAIL = "/vlidate/email";
     private final String VALIDATE_NICKNAME = "/vlidate/nickname";
-    private final String VALIDATE_TELNUMBER = "/vlidate/tel-number";
+    private final String VALIDATE_TEL_NUMBER = "/vlidate/tel-number";
     private final String PATCH_PROFILE = "/profile";
 
     @ApiOperation(value = "유저 정보 불러오기", notes = "Request Header Authorization에 Bearer Token을 포함하여 요청을 하면, 성공시 유저 정보를 반환, 실패시 실패 메세지를 반환")
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "유저 휴대전화번호 중복 체크", notes = "Request Body에 Email을 포함하여 요청하면, 중복 결과를 반환, 실패시 실패 메세지를 반환")
-    @PostMapping(VALIDATE_TELNUMBER)
+    @PostMapping(VALIDATE_TEL_NUMBER)
     public ResponseDto<ValidateTelNumberResponseDto> validateTelNumber(
             @Valid @RequestBody ValidateTelNumberDto requestBody) {
         ResponseDto<ValidateTelNumberResponseDto> response = userService.validateTelNumber(requestBody);

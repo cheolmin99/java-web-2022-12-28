@@ -1,6 +1,7 @@
 package com.jihoon.board.dto.request.user;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ValidateEmailDto {
     @ApiModelProperty(value = "유저 이메일", example = "id@email.com", required = true)
+    @NotBlank
     @Email
     private String email;
 }
