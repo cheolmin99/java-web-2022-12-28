@@ -195,7 +195,7 @@ export default function BoardDetailView() {
     }, [likeList]);
 
   return (
-    <Box sx={{ p: '100px 222px' }}>
+    <Box sx={{ p: '100px 222px' , whiteSpace: 'pre-wrap'}}>
         <Box>
             <Box>
                 <Typography sx={{ fontSize: '32px', fontWeight: 500 }}>{board?.boardTitle}</Typography>

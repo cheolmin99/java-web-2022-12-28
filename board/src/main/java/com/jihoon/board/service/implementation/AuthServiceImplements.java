@@ -19,8 +19,10 @@ import com.jihoon.board.service.AuthService;
 @Service
 public class AuthServiceImplements implements AuthService {
 
-    @Autowired private TokenProvider tokenProvider;
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private TokenProvider tokenProvider;
+    @Autowired
+    private UserRepository userRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -29,16 +31,23 @@ public class AuthServiceImplements implements AuthService {
         SignUpResponseDto data = null;
 
         String email = dto.getEmail();
+        String nickname = dto.getNickname();
         String telNumber = dto.getTelNumber();
         String password = dto.getPassword();
 
         try {
 
             boolean hasEmail = userRepository.existsByEmail(email);
-            if (hasEmail) return ResponseDto.setFailed(ResponseMessage.EXIST_EMAIL);
+            if (hasEmail)
+                return ResponseDto.setFailed(ResponseMessage.EXIST_EMAIL);
+
+            boolean hasNickname = userRepository.existsByNickname(nickname);
+            if (hasNickname)
+                return ResponseDto.setFailed(ResponseMessage.EXIST_NICKNAME);
 
             boolean hasTelNumber = userRepository.existsByTelNumber(telNumber);
-            if (hasTelNumber) return ResponseDto.setFailed(ResponseMessage.EXIST_TEL_NUMBER);
+            if (hasTelNumber)
+                return ResponseDto.setFailed(ResponseMessage.EXIST_TEL_NUMBER);
 
             String encodedPassword = passwordEncoder.encode(password);
             dto.setPassword(encodedPassword);
@@ -48,7 +57,7 @@ public class AuthServiceImplements implements AuthService {
 
             data = new SignUpResponseDto(true);
 
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
@@ -68,11 +77,13 @@ public class AuthServiceImplements implements AuthService {
 
         try {
             userEntity = userRepository.findByEmail(email);
-            if (userEntity == null) return ResponseDto.setFailed(ResponseMessage.FAIL_SIGN_IN);
+            if (userEntity == null)
+                return ResponseDto.setFailed(ResponseMessage.FAIL_SIGN_IN);
 
             boolean isEqualPassword = passwordEncoder.matches(password, userEntity.getPassword());
-            if (!isEqualPassword) return ResponseDto.setFailed(ResponseMessage.FAIL_SIGN_IN);
-        } catch(Exception exception) {
+            if (!isEqualPassword)
+                return ResponseDto.setFailed(ResponseMessage.FAIL_SIGN_IN);
+        } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
@@ -80,7 +91,7 @@ public class AuthServiceImplements implements AuthService {
         try {
             String token = tokenProvider.create(email);
             data = new SignInResponseDto(userEntity, token);
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.FAIL_SIGN_IN);
         }
