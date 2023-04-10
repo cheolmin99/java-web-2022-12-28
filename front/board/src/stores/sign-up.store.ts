@@ -24,6 +24,29 @@ interface ISignUpStore {
     setTelNumber: (str: string) => void
     setAddress: (str: string) => void;
     setAddressDetail: (str: string) => void;
+
+    singUpError: boolean;
+    setSingUpError: (singUpError: boolean) => void;
+
+    emailPatternCheck: boolean | null;
+    setEamilPatternCheck:(emailPatternCheck: boolean) => void;
+    emailValidate: boolean | null;
+    setEmailValidate: (emailValidate: boolean) => void;
+
+    passwordPatternCheck: boolean | null;
+    setPasswordPatternCheck: (passwordPatternCheck: boolean) => void;
+    passwordValidate: boolean | null;
+    setPasswordValidate: (passwordValidate: boolean) => void;
+
+    nicknameValidate: boolean | null;
+    setNicknameValidate: (nicknameValidate: boolean) => void;
+
+    telNumberValidate: boolean | null;
+    setTelNumberValidate: (telNumberValidate: boolean) => void;
+    telNumberPatternCheck: boolean | null;
+    setTelNumberPatternChack:(telNumberPatternCheck: boolean) => void;
+
+
 }
 
 //^ create 메서드를 사용해서 store를 생성

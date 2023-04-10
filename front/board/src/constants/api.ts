@@ -22,6 +22,8 @@ export const POST_BOARD_URL = `${HOST}api/board/`;
 export const POST_COMMENT_URL = `${HOST}api/board/comment`;
 export const LIKE_URL = `${HOST}api/board/like`;
 export const VALIDATE_EMAIL_URL = `${HOST}api/user/validate/email`;
+export const VALIDATE_NICKNAME_URL = `${HOST}api/user/validate/nickname`;
+export const VALIDATE_TEL_NUMBER_URL = `${HOST}api/user/validate/tel-number`;
 
 export const PATCH_BOARD_URL = `${HOST}api/board/`;
 
