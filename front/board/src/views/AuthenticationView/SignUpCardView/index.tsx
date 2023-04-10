@@ -65,8 +65,6 @@ function FirstPage() {
     const value = event.target.value;
     const isMatched = passwordValidator.test(value);
     setPasswordPatternCheck(isMatched);
-    // if (isMatched) setPasswordMessage('');
-    // '영대문자 + 영소문자 + 숫자 + 특수문자(!?_)를 포함한 8-20자를 입력해주세요.'
     setPassword(value);
   }
 
@@ -111,7 +109,7 @@ function FirstPage() {
         !emailPatternCheck ? (<FormHelperText sx={{ color: 'red' }} >이메일 형식이 맞지 않습니다.</FormHelperText>) :
         emailValidate === null ? (<FormHelperText sx={{ color: 'orange' }} >이메일 중복 체크를 해주세요.</FormHelperText>) :
         !emailValidate ? (<FormHelperText sx={{ color: 'red' }} >사용할 수 없는 이메일 입니다.</FormHelperText>) :
-                        (<FormHelperText sx={{ color: 'green' }} >사용할 수 없는 이메일 입니다.</FormHelperText>) 
+                        (<FormHelperText sx={{ color: 'green' }} >사용가능한 이메일 입니다.</FormHelperText>) 
         }
       </FormControl>
       <FormControl sx={{ mt: "40px" }} error={signUpError} fullWidth variant="standard">
@@ -128,7 +126,7 @@ function FirstPage() {
           value={password}
           onChange={(event) => onPasswordChangeHandler(event)}
         />
-        { !passwordPatternCheck === false ? 
+        { passwordPatternCheck === false ? 
           (<FormHelperText sx={{ color: 'red' }}>{'영대문자 + 영소문자 + 숫자 + 특수문자(!?_)를 포함한 8-20자를 입력해주세요.'}</FormHelperText>) : (<></>)
         }
       </FormControl>

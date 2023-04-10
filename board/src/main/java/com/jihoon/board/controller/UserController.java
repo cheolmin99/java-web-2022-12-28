@@ -27,7 +27,6 @@ import com.jihoon.board.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Api(description = "유저 모듈")
 @RestController
@@ -38,9 +37,9 @@ public class UserController {
     private UserService userService;
 
     private final String GET_USER = "/";
-    private final String VALIDATE_EMAIL = "/vlidate/email";
-    private final String VALIDATE_NICKNAME = "/vlidate/nickname";
-    private final String VALIDATE_TEL_NUMBER = "/vlidate/tel-number";
+    private final String VALIDATE_EMAIL = "/validate/email";
+    private final String VALIDATE_NICKNAME = "/validate/nickname";
+    private final String VALIDATE_TEL_NUMBER = "/validate/tel-number";
     private final String PATCH_PROFILE = "/profile";
 
     @ApiOperation(value = "유저 정보 불러오기", notes = "Request Header Authorization에 Bearer Token을 포함하여 요청을 하면, 성공시 유저 정보를 반환, 실패시 실패 메세지를 반환")
